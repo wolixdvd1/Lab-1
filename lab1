@@ -1,0 +1,160 @@
+import os, _json
+import sys, time
+
+#настройка
+esc = '\x1B['
+reset = esc + '0m'
+
+def bg_color(color):
+    return esc + '48;5;' + str(color) + 'm'
+
+red = bg_color(160)
+blue = bg_color(17)
+white = bg_color(255)
+black = bg_color(0)
+pink = bg_color(1)
+ax = bg_color(235)
+
+def clear():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def f(x):
+    print()
+    print()
+    print(x)
+    print()
+
+# Задание 1 -- Флаг
+
+def flag():
+    f('Флаг -- Таиланд')
+    pixel = '     '
+    height = 15
+    length = height - 2
+    for i in range(height):
+        if i < 2.5:
+            print(red + pixel * length + reset)
+        elif i >= 2.5 and i < 5:
+            print(white + pixel * length + reset)
+        elif i >= 5 and i <= 10:
+            print(blue + pixel * length + reset)
+        elif i >= 10 and i < 12.5:
+            print(white + pixel * length + reset)
+        else:
+            print(red + pixel * length + reset)
+
+# Задание 2 -- Узор f
+
+def uzor():
+    f('Узор f')
+    pixel = esc + '41m  \x1b[0m'
+    line = '  '
+    for i in range(length):
+        print((line * 4 + pixel + line*4) * length)
+        print((line * 3 + pixel + line + pixel + line*3) * length)
+        print((line * 2 + pixel + line*3 + pixel + line * 2) * length)
+        print((line + pixel + line*5 + pixel + line) * length)
+        print((pixel + line*7 + pixel) * length)
+if __name__ == '__main__':
+    length = 4
+    height = length
+    for x in range(height):
+        print( esc + '2A' and esc + '2D' )
+
+# Задание 3 Анимация из 3 кадров
+
+def animka():
+    f('Анимацияяяя')
+    def animation(shift):
+        length = 1
+        line = '  '
+        pixel = esc + '41m  \x1b[0m'
+        pad = ' ' * shift
+        rows = [
+            pad + (line * 4 + pixel + line * 4) * length,
+            pad + (line * 3 + pixel + line + pixel + line * 3) * length,
+            pad + (line * 2 + pixel + line * 3 + pixel + line * 2) * length,
+            pad + (line + pixel + line * 5 + pixel + line) * length,
+            pad + (pixel + line * 7 + pixel) * length,
+        ]
+        return rows
+
+    def main():
+        clear()
+        height = 1
+        positions = list(range(0, 10, 2)) + list(range(5, 0, -2))
+
+        try:
+            while True:
+                for p in positions:
+                    rows = animation(p)
+                    for r in rows:
+                        sys.stdout.write(r + '\n')
+                    sys.stdout.flush()
+                    time.sleep(0.5)
+                    sys.stdout.write(esc + f'{height}A')  # вверх на 5
+                    sys.stdout.flush()
+        except KeyboardInterrupt:
+            sys.stdout.write(esc + f'{height}B\n')
+
+    if __name__ == '__main__':
+        main()
+
+# Задание 4 Числа
+
+def diagr():
+    f('Числа больше 5 и меньше 5, отрицательные отбросить')
+    width=40
+    numbs=[]
+    file=open('sequence.txt')
+    for line in file:
+        if line.strip()!='':
+            numbs.append(float(line))
+    inside=0 ## <5
+    outside=0 ## все остальные без отриц
+    for numb in numbs:
+        if numb<5 and numb>=0:
+            inside+=1
+        elif numb>5:
+            outside+=1
+    total=inside+outside
+    percentinside=inside/total*100
+    percentoutside=outside/total*100
+
+    leninside=round(percentinside/100*width)
+    lenoutside=round(percentoutside/100*width)
+    print(f'<-5, <5   {pink}{' '*leninside }{reset} {percentinside:.1f}% ({inside})')
+    print(f'остальные {blue}{' '*lenoutside}{reset} {percentoutside:.1f}% ({outside})')
+
+# Доп задание -- y = 1/x
+
+def graph():
+    f('Функция')
+    length = 9
+    width   = 10
+    pixel = ' '
+    for x in range(length, 0, -1):
+        y = 1 / x
+        b = int(y * width)
+        print(f'{1.5-y:.2f}\t{pixel * b}{black}{pixel * ((13-length) + (2-x//2))}{reset}')
+
+    for x in range(length + 2):
+        if x == 0:
+            print('0\t', end='')
+        else:
+            print(str(x), end=' ')
+
+
+def intro():
+    print("ЛР 1 Вариант 6")
+    print('Кивилева Диана 561046')
+    print("Страна: Таиланд ... Узор: f ... Функция: y = 1 / x")
+    print("Условие: Числа больше 5 и меньше 5, отрицательные отбросить ")
+
+intro()
+# Ответы
+flag()
+uzor()
+graph()
+diagr()
+animka()
